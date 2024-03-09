@@ -99,8 +99,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public Command Intake(){
     return this.run(() -> {
-      m_pidController.setReference(ShooterConstants.IntakeSpeed, CANSparkMax.ControlType.kVelocity);
-      m_pidController2.setReference(-ShooterConstants.IntakeSpeed, CANSparkMax.ControlType.kVelocity);
+      m_shooterMotorTop.set(0.25);
+      m_shooterMotorBottom.set(-0.25);
+      m_shooterMotorAmp.set(0.25);
     });
   }
 
@@ -134,6 +135,8 @@ public class ShooterSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Shooter Top Speed", m_shooterMotorTop.getEncoder().getVelocity());
     SmartDashboard.putNumber("Shooter Bottom Speed", m_shooterMotorBottom.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Shooter Top Current", m_shooterMotorTop.getOutputCurrent());
+    SmartDashboard.putNumber("Shooter Bottom Current", m_shooterMotorBottom.getOutputCurrent());
   }
 
   @Override

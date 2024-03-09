@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 //import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,13 +19,18 @@ public class ElevatorSubsystem extends SubsystemBase {
   private SparkPIDController m_pidController1;
   private SparkPIDController m_pidController2;
 
+  private boolean homeinginProgress1 = false;
+  private boolean homeinginProgress2 = false;
+
   public ElevatorSubsystem() {
 
     m_elevatorMotor1 = new CANSparkMax(ElevatorConstants.ElevatorMotor1CanID, CANSparkLowLevel.MotorType.kBrushless);
     m_elevatorMotor1.restoreFactoryDefaults();
+    m_elevatorMotor1.setIdleMode(IdleMode.kBrake);
 
     m_elevatorMotor2 = new CANSparkMax(ElevatorConstants.ElevatorMotor2CanID, CANSparkLowLevel.MotorType.kBrushless);
     m_elevatorMotor2.restoreFactoryDefaults();
+    m_elevatorMotor2.setIdleMode(IdleMode.kBrake);
 
   /**
    * In order to use PID functionality for a controller, a SparkPIDController object
@@ -49,14 +55,16 @@ public class ElevatorSubsystem extends SubsystemBase {
   m_pidController2.setFF(ElevatorConstants.kFF);
   m_pidController2.setOutputRange(ElevatorConstants.kMinOutput, ElevatorConstants.kMaxOutput);
 
-  //m_elevatorMotor1.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ElevatorConstants.elevatorForwardLimit);
-  //m_elevatorMotor1.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ElevatorConstants.elevatorReverseLimit);
+
+
+  m_elevatorMotor1.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ElevatorConstants.elevatorForwardLimit);
+  m_elevatorMotor1.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ElevatorConstants.elevatorReverseLimit);
 
   //m_elevatorMotor1.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
   //m_elevatorMotor1.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
 
-  //m_elevatorMotor2.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ElevatorConstants.elevatorForwardLimit);
-  //m_elevatorMotor2.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ElevatorConstants.elevatorReverseLimit);
+  m_elevatorMotor2.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ElevatorConstants.elevatorForwardLimit);
+  m_elevatorMotor2.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ElevatorConstants.elevatorReverseLimit);
 
   //m_elevatorMotor2.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
   //m_elevatorMotor2.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
@@ -97,6 +105,15 @@ public Command elevatorOff() {
     });
 }
 
+public Command elevatorHome(){
+  return this.run(() -> {
+      homeinginProgress1 = true;
+      homeinginProgress2 = true;
+      m_elevatorMotor1.set(-0.1);
+      m_elevatorMotor2.set(-0.1);
+  });
+}
+
 
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).
@@ -111,6 +128,18 @@ public Command elevatorOff() {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    if(homeinginProgress1){
+      if(m_elevatorMotor1.getOutputCurrent() >= ElevatorConstants.homingCurrent){
+        m_elevatorMotor1.getEncoder().setPosition(0);
+        m_elevatorMotor1.set(0);
+      }
+    }
+    if(homeinginProgress2){
+      if(m_elevatorMotor2.getOutputCurrent() >= ElevatorConstants.homingCurrent){
+        m_elevatorMotor2.getEncoder().setPosition(0);
+        m_elevatorMotor2.set(0);
+      }
+    }
   }
 
   @Override

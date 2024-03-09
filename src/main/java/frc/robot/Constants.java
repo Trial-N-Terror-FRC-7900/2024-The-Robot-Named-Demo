@@ -79,7 +79,7 @@ public final class Constants
   {
     public static final int IntakeMotorCanID = 9;
 
-    public static final double IntakeSpeed = -0.25;
+    public static final double IntakeSpeed = -1;
   }
 
   public static class ShooterConstants
@@ -120,5 +120,8 @@ public final class Constants
 
     public static final float elevatorForwardLimit = 1;
     public static final float elevatorReverseLimit = 0;
+
+    public static final double homingCurrent = 10;
+
   }
 }
