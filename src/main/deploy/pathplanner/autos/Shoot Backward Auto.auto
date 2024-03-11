@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.0262189393359753,
+      "y": 7.073968190489573
+    },
+    "rotation": 179.63506366426944
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Speaker Target"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SILLYLYLY Path"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of Eat Far Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot Backward"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

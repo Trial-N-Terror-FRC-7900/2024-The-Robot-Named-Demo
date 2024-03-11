@@ -1,0 +1,58 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.7712302091270848,
+        "y": 6.36074917539906
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.756674719023197,
+        "y": 6.353471430347117
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.5820088377765407,
+        "y": 6.222472019412123
+      },
+      "prevControl": {
+        "x": 1.5747310927245965,
+        "y": 6.222472019412123
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.55,
+      "rotationDegrees": -160.7547405922265,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -159.543686236722,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Practice Auto Paths",
+  "previewStartingState": {
+    "rotation": -154.33480853782652,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
