@@ -84,7 +84,7 @@ public class ArmSubsystem extends SubsystemBase {
   */
 
   public Command armLowReady(){
-    return this.run(() -> m_pidController.setReference(ArmConstants.armDown, CANSparkMax.ControlType.kPosition));
+    return this.runOnce(() -> m_pidController.setReference(ArmConstants.armDown, CANSparkMax.ControlType.kPosition));
   }
   public Command armAmp(){
     //call to specific rotation first
@@ -96,7 +96,7 @@ public class ArmSubsystem extends SubsystemBase {
     //m_armMotor1.set(1*flip);
     //m_armMotor2.set(-1*flip);
     //m_armMotor1.get();
-    return this.run(() -> m_pidController.setReference(ArmConstants.armSpeaker, CANSparkMax.ControlType.kPosition));
+    return this.runOnce(() -> m_pidController.setReference(ArmConstants.armSpeaker, CANSparkMax.ControlType.kPosition));
 }
 
 /*

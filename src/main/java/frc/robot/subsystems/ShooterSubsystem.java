@@ -74,16 +74,16 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command shootOn(){
-    return this.run(() -> {
+    return this.runOnce(() -> {
       /*
       m_shooterMotorTop.set(-ShooterConstants.shootSpeed);
       m_shooterMotorBottom.set(ShooterConstants.shootSpeed);
       */
-      m_pidController3.setReference(ShooterConstants.shootSpeed, CANSparkMax.ControlType.kVelocity);
+      m_pidController3.setReference(-ShooterConstants.shootSpeed, CANSparkMax.ControlType.kVelocity);
     });
   }
   public Command shootOff(){
-    return this.run(() -> {
+    return this.runOnce(() -> {
       m_shooterMotorTop.set(ShooterConstants.noShot);
       m_shooterMotorBottom.set(ShooterConstants.noShot);
       m_shooterMotorAmp.set(ShooterConstants.noShot);
@@ -91,7 +91,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command spinUp(){
-    return this.run(()->{
+    return this.runOnce(()->{
       m_pidController.setReference(-ShooterConstants.shootSpeed, CANSparkMax.ControlType.kVelocity);
       m_pidController2.setReference(ShooterConstants.shootSpeed, CANSparkMax.ControlType.kVelocity);
     });

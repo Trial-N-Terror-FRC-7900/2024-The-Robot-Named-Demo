@@ -3,11 +3,20 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "Shoot BACKWARD Auto",
-    "Practice Auto Paths"
+    "Blue 1 Paths",
+    "Blue 2 Paths",
+    "Blue 3 Paths",
+    "Red 1 Paths",
+    "Red 2 Paths",
+    "Red 3 Paths"
   ],
   "autoFolders": [
-    "Test Folder"
+    "Blue 3 Autos",
+    "Red 1 Autos",
+    "Blue 1 Autos",
+    "Red 2 Autos",
+    "Blue 2 Autos",
+    "Red 3 Autos"
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,

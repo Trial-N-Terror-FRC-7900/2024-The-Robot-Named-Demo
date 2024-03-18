@@ -1,0 +1,25 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 15.5,
+      "y": 2.25
+    },
+    "rotation": -177.16629789107023
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Red 1 Leave Start"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Red 1 Autos",
+  "choreoAuto": false
+}

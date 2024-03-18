@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
+import edu.wpi.first.wpilibj.Servo;
 
 public class ElevatorSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
@@ -18,9 +19,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   private CANSparkMax m_elevatorMotor2;
   private SparkPIDController m_pidController1;
   private SparkPIDController m_pidController2;
+  private Servo m_greenServo;
+  private Servo m_purpleServo;
 
   private boolean homeinginProgress1 = false;
   private boolean homeinginProgress2 = false;
+
+  private int invertBoolean =1;
 
   public ElevatorSubsystem() {
 
@@ -31,6 +36,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevatorMotor2 = new CANSparkMax(ElevatorConstants.ElevatorMotor2CanID, CANSparkLowLevel.MotorType.kBrushless);
     m_elevatorMotor2.restoreFactoryDefaults();
     m_elevatorMotor2.setIdleMode(IdleMode.kBrake);
+    m_greenServo = new Servo(ElevatorConstants.servoIDGreen);
+    m_purpleServo = new Servo(ElevatorConstants.servoIDPurple);
 
   /**
    * In order to use PID functionality for a controller, a SparkPIDController object
@@ -60,14 +67,14 @@ public class ElevatorSubsystem extends SubsystemBase {
   m_elevatorMotor1.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ElevatorConstants.elevatorForwardLimit);
   m_elevatorMotor1.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ElevatorConstants.elevatorReverseLimit);
 
-  //m_elevatorMotor1.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
-  //m_elevatorMotor1.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+  //m_ElevatorMotor1.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
+  //m_ElevatorMotor1.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
 
   m_elevatorMotor2.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ElevatorConstants.elevatorForwardLimit);
   m_elevatorMotor2.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ElevatorConstants.elevatorReverseLimit);
 
-  //m_elevatorMotor2.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
-  //m_elevatorMotor2.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+  //m_ElevatorMotor2.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
+  //m_ElevatorMotor2.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
   }
   /**
    * Example command factory method.
@@ -83,18 +90,30 @@ public class ElevatorSubsystem extends SubsystemBase {
         });
   }
 
+  public Command boolOn(){
+  return this.run(()-> {
+    invertBoolean = 1;
+  });
+}
+
+public Command boolOff(){
+  return this.run(()-> {
+    invertBoolean = -1;
+  });
+}
+
 public Command elevatorUp() {
     return this.run(() -> {
-      m_elevatorMotor1.set(0.1);
-      m_elevatorMotor2.set(0.1);
+      m_elevatorMotor1.set(-0.8);
+      m_elevatorMotor2.set(-0.8*invertBoolean);
     });
 
 }
 
 public Command elevatorDown() {
     return this.run(() -> {
-      m_elevatorMotor1.set(-0.1);
-      m_elevatorMotor2.set(-0.1);
+      m_elevatorMotor1.set(0.8);
+      m_elevatorMotor2.set(0.8*invertBoolean);
     });
 }
 
@@ -111,6 +130,20 @@ public Command elevatorHome(){
       homeinginProgress2 = true;
       m_elevatorMotor1.set(-0.1);
       m_elevatorMotor2.set(-0.1);
+  });
+}
+
+public Command elevatorUnlock(){
+  return this.run(()-> {
+      m_greenServo.setAngle(ElevatorConstants.greenUnlockDegrees);
+      m_purpleServo.setAngle(ElevatorConstants.purpleUnlockDegrees);
+  });
+}
+
+public Command elevatorLock(){
+  return this.run(()-> {
+      m_greenServo.setAngle(ElevatorConstants.greenLockDegrees);
+      m_purpleServo.setAngle(ElevatorConstants.purpleLockDegrees);
   });
 }
 

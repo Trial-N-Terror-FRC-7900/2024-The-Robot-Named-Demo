@@ -47,7 +47,7 @@ public final class Constants
     public static final double LEFT_X_DEADBAND  = 0.1;
     public static final double LEFT_Y_DEADBAND  = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
-    public static final double TURN_CONSTANT    = 6;
+    public static final double TURN_CONSTANT    = 10;
   }
 
   public static class ArmConstants
@@ -59,6 +59,10 @@ public final class Constants
 
     public static final double EncoderZeroPosOffset = 0.988888; 
 
+    public static final double armSpeaker = 100;
+    public static final double armAmp = 85;//130
+    public static final double armDown = 5;
+
     public static final double kP = 0.01; //0.3
     public static final double kI = 0; //0.00001
     public static final double kD = 0; //20
@@ -67,13 +71,31 @@ public final class Constants
     public static final double kMaxOutput = 1; 
     public static final double kMinOutput = -0.5;
 
-    public static final double armSpeaker = 100;
-    public static final double armAmp = 130;//130
-    public static final double armDown = 5;
-
     public static final float armForwardLimit = 140;
     public static final float armReverseLimit = 3;
   }
+
+ /* CAN ID WIRING
+ * Rio:
+ * Intake: 9
+ * Purple Climber: 17 or 18
+ * Purple Shoulder: 10
+ * Back Left - Purple Drive: 2
+ * Back Left - Purple Steer: 1
+ * Front Left - Purple Steer: 7
+ * Front Left - Purple Drive: 8
+ * 
+ * - Junction -
+ * 
+ * Front Right - Green Drive: 6
+ * Front Right - Green Steer: 5
+ * Back Right - Green Drive: 4
+ * Green Climber: 17 or 18
+ * Green Shoulder: 11
+ * Back Right - Green Steer: 3
+ * Hand: 12, 13, 14
+ * PDH: 1
+ */
 
   public static class IntakeConstants 
   {
@@ -107,6 +129,9 @@ public final class Constants
     public static final int ElevatorMotor1CanID = 17;
     public static final int ElevatorMotor2CanID = 18;
 
+    public static final double elevatordown = 0;
+    public static final double elevatorup = 1;
+
     public static final double kP = 0.1; 
     public static final double kI = 1e-4;
     public static final double kD = 1; 
@@ -115,13 +140,17 @@ public final class Constants
     public static final double kMaxOutput = 1; 
     public static final double kMinOutput = -1;
 
-    public static final double elevatordown = 0;
-    public static final double elevatorup = 1;
-
     public static final float elevatorForwardLimit = 1;
     public static final float elevatorReverseLimit = 0;
 
     public static final double homingCurrent = 10;
 
+    public static final int servoIDPurple = 9;
+    public static final int servoIDGreen = 7;
+    
+    public static final double purpleUnlockDegrees = 0;
+    public static final double greenUnlockDegrees = 0;
+    public static final double purpleLockDegrees = 120;
+    public static final double greenLockDegrees = 90;
   }
 }

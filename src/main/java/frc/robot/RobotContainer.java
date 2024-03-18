@@ -8,6 +8,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -56,20 +57,27 @@ public class RobotContainer
   final CommandXboxController driverXbox = new CommandXboxController(0);
   final CommandXboxController opperatorXbox = new CommandXboxController(2);
 
+  public double invertJoy = 1;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer()
   {
-
      //Register Named Commands
-     NamedCommands.registerCommand("IntakeON", m_intake.intakeOnCommand());
+      //Intake Commands
+     NamedCommands.registerCommand("IntakeON", m_intake.intakeOnCommand());       
        NamedCommands.registerCommand("ShooterIntakeON", m_shooter.Intake());
      NamedCommands.registerCommand("IntakeOFF", m_intake.intakeOffCommand());
-       //NamedCommands.registerCommand("ShooterIntakeOFF", m_shooter.shootOff());
-     NamedCommands.registerCommand("ShooterON", m_shooter.shootOn());
-     //NamedCommands.registerCommand("ShooterOFF", m_shooter.shootOff());
+       NamedCommands.registerCommand("ShooterIntakeOFF", m_shooter.shootOff());
+      //Shooter Commands
+     NamedCommands.registerCommand("ShooterON", m_shooter.shootOn());            
+     NamedCommands.registerCommand("ShooterOFF", m_shooter.shootOff());
+     NamedCommands.registerCommand("ShooterSPIN", m_shooter.spinUp());
+      //Arm Commands
+     NamedCommands.registerCommand("ArmAMP", m_arm.armAmp());   
+     NamedCommands.registerCommand("ArmSPEAKER", m_arm.armSpeaker());
+     NamedCommands.registerCommand("ArmDOWN", m_arm.armLowReady());       
 
 
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -78,18 +86,26 @@ public class RobotContainer
 
     // Configure the trigger bindings
     configureBindings();
-
+    
+    if(DriverStation.getAlliance().isPresent()){
+      if(DriverStation.getAlliance().get() == DriverStation.Alliance.Red){
+        invertJoy = 1;
+      }
+      else{
+        invertJoy = -1;
+      }
+    }
     AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
-                                                                   () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
-                                                                                                OperatorConstants.LEFT_Y_DEADBAND),
-                                                                   () -> -MathUtil.applyDeadband(driverXbox.getLeftX(),
-                                                                                                OperatorConstants.LEFT_X_DEADBAND),
-                                                                   () -> -MathUtil.applyDeadband(driverXbox.getRightX(),
-                                                                                                OperatorConstants.RIGHT_X_DEADBAND),
-                                                                   driverXbox.getHID()::getYButtonPressed,
-                                                                   driverXbox.getHID()::getAButtonPressed,
-                                                                   driverXbox.getHID()::getXButtonPressed,
-                                                                   driverXbox.getHID()::getBButtonPressed);
+                                                          () -> invertJoy*MathUtil.applyDeadband(driverXbox.getLeftY(),
+                                                                                      OperatorConstants.LEFT_Y_DEADBAND),
+                                                          () -> invertJoy*MathUtil.applyDeadband(driverXbox.getLeftX(),
+                                                                                      OperatorConstants.LEFT_X_DEADBAND),
+                                                          () -> -MathUtil.applyDeadband(driverXbox.getRightX(),
+                                                                                      OperatorConstants.RIGHT_X_DEADBAND),
+                                                          driverXbox.getHID()::getYButtonPressed,
+                                                          driverXbox.getHID()::getAButtonPressed,
+                                                          driverXbox.getHID()::getXButtonPressed,
+                                                          driverXbox.getHID()::getBButtonPressed);
 
     // Applies deadbands and inverts controls because joysticks
     // are back-right positive while robot
@@ -118,8 +134,9 @@ public class RobotContainer
         () -> driverXbox.getRawAxis(2));
 
     drivebase.setDefaultCommand(
-        !RobotBase.isSimulation() ? driveFieldOrientedDirectAngle : driveFieldOrientedDirectAngleSim);
+        !RobotBase.isSimulation() ? closedAbsoluteDriveAdv : closedAbsoluteDriveAdv);
   }
+
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -132,23 +149,41 @@ public class RobotContainer
   {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
-    driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+    //driverXbox.button(6).onTrue((Commands.runOnce(drivebase::resetOdometry(Pose2d(0,0,0)))));
+    driverXbox.button(7).onTrue((Commands.runOnce(drivebase::zeroGyro)));
     driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
     driverXbox.b().whileTrue(
         Commands.deferredProxy(() -> drivebase.driveToPose(
                                    new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
                               ));
-    opperatorXbox.y().onTrue(m_intake.intakeOnCommand()).onFalse(m_intake.intakeOffCommand());
+                              
+    //use y for shooter intake (reverse shooter)
     opperatorXbox.y().onTrue(m_shooter.Intake()).onFalse(m_shooter.shootOff());
 
+    //use a to push note to shooter
+    opperatorXbox.a().onTrue(m_shooter.shootOn()).onFalse(m_shooter.shootOff());
+
+    //use x to spin up shooter
     opperatorXbox.x().onTrue(m_shooter.spinUp()).onFalse(m_shooter.shootOff());
+
+    //use the bumpers for amp (left) and speaker (right) positions
     opperatorXbox.leftBumper().onTrue(m_arm.armAmp());
     opperatorXbox.rightBumper().onTrue(m_arm.armSpeaker());
+
+    //use b to return arm back to robot and use ground intake
     opperatorXbox.b().onTrue(m_arm.armLowReady());
+    opperatorXbox.b().onTrue(m_intake.intakeOnCommand()).onFalse(m_intake.intakeOffCommand());
+    opperatorXbox.b().onTrue(m_shooter.Intake()).onFalse(m_shooter.shootOff());
+
     //use Dpad up and down to control climbers
     opperatorXbox.povUp().onTrue(m_elevator.elevatorUp()).onFalse(m_elevator.elevatorOff());
-    opperatorXbox.povUp().onTrue(m_elevator.elevatorDown()).onFalse(m_elevator.elevatorOff());
+    opperatorXbox.povDown().onTrue(m_elevator.elevatorDown()).onFalse(m_elevator.elevatorOff());
 
+    opperatorXbox.povLeft().onTrue(m_elevator.elevatorLock());
+    opperatorXbox.povRight().onTrue(m_elevator.elevatorUnlock());
+
+    opperatorXbox.button(6).onTrue(m_elevator.boolOn());
+    opperatorXbox.button(7).onTrue(m_elevator.boolOff());
     //opperatorXbox.setDefaultCommand();
 
     // driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
