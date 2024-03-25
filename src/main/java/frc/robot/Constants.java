@@ -7,9 +7,16 @@ package frc.robot;
 //import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.pathplanner.lib.util.PIDConstants;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.PubSub;
 import swervelib.math.Matter;
+import edu.wpi.first.math.Matrix;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean constants. This
@@ -153,4 +160,12 @@ public final class Constants
     public static final double purpleLockDegrees = 120;
     public static final double greenLockDegrees = 90;
   }
+
+public static class VisionConstants {
+    public static final String CameraName = "Camera";
+    public static final Transform3d RobotToCam = new Transform3d(new Translation3d(1,1,1), new Rotation3d(1,1,1));
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+}
+
 }

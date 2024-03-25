@@ -36,6 +36,10 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+import java.util.Optional;
+import org.photonvision.EstimatedRobotPose;
+
+import frc.robot.subsystems.Vision;
 
 public class SwerveSubsystem extends SubsystemBase
 {
@@ -44,10 +48,15 @@ public class SwerveSubsystem extends SubsystemBase
    * Swerve drive object.
    */
   private final SwerveDrive swerveDrive;
+
   /**
    * Maximum speed of the robot in meters per second, used to limit acceleration.
    */
   public        double      maximumSpeed = Units.feetToMeters(14.5);
+
+
+  private Vision vision;
+  Optional<EstimatedRobotPose> thing;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -72,6 +81,7 @@ public class SwerveSubsystem extends SubsystemBase
 
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+
     try
     {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed);
@@ -323,6 +333,8 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
+    thing = vision.getEstimatedGlobalPose(); 
+    swerveDrive.addVisionMeasurement(vision.getEstimatedGlobalPose().get().estimatedPose.toPose2d(), vision.getEstimatedGlobalPose().get().timestampSeconds);
   }
 
   @Override
